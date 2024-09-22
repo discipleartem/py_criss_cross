@@ -31,21 +31,21 @@ def is_draw(field):
 
 
 def get_user_coordinates():
-    return get_char_input('Input coordinates: ')
+    while True:
+        coordinates = get_char_input('Input coordinates (e.g., a1): ')
+        if len(coordinates) == 2 and coordinates[0] in VERTICAL_COORDINATES and coordinates[1] in '123':
+            return coordinates[0], int(coordinates[1]) - 1
+        print('Invalid coordinates. Please try again.')
 
 
 def get_user_move(field):
     while True:
-        y, x = tuple(get_user_coordinates())
-        if int(x) not in range(1, 4) or y not in VERTICAL_COORDINATES:
-            print('Coordinates not available')
-            continue
-        real_x, real_y = int(x) - 1, VERTICAL_COORDINATES.index(y)
-        if field[real_y][real_x] == '_':
-            break
+        y, x = get_user_coordinates()
+        real_y = VERTICAL_COORDINATES.index(y)
+        if field[real_y][x] == '_':
+            return x, real_y
         else:
             print('Position not empty')
-    return real_x, real_y
 
 
 def get_opponent_char(char):
@@ -53,18 +53,10 @@ def get_opponent_char(char):
 
 
 def has_winner(char, field):
-    opponent_char = get_opponent_char(char)
-    for y in range(3):
-        if opponent_char not in field[y] and '_' not in field[y]:
-            return True
-    for x in range(3):
-        if opponent_char not in [field[i][x] for i in range(3)] and '_' not in [field[i][x] for i in range(3)]:
-            return True
-    if opponent_char not in [field[i][i] for i in range(3)] and '_' not in [field[i][i] for i in range(3)]:
-        return True
-    if opponent_char not in [field[i][2 - i] for i in range(3)] and '_' not in [field[i][2 - i] for i in range(3)]:
-        return True
-    return False
+    lines = field + list(zip(*field))  # Check rows and columns
+    lines.append([field[i][i] for i in range(3)])  # Check main diagonal
+    lines.append([field[i][2 - i] for i in range(3)])  # Check secondary diagonal
+    return any(line == [char] * 3 for line in lines)
 
 
 def get_computer_move(field):
@@ -78,20 +70,20 @@ def get_computer_move(field):
 game_field = [['_' for x in range(3)] for y in range(3)]
 user_char = get_user_choice()
 computer_char = get_opponent_char(user_char)
-
 while True:
     display_field(game_field)
     if is_draw(game_field):
         print('The game is a draw.')
         break
-
     x, y = get_user_move(game_field)
     game_field[y][x] = user_char
     if has_winner(user_char, game_field):
         display_field(game_field)
         print('You win!')
         break
-
+    if is_draw(game_field):
+        print('The game is a draw.')
+        break
     x, y = get_computer_move(game_field)
     game_field[y][x] = computer_char
     if has_winner(computer_char, game_field):
