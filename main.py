@@ -1,92 +1,95 @@
 from random import randint
 
-VERTICAL_COORDINATES = ('a', 'b', 'c')
+# Constants
+VERTICAL_COORDS = ('a', 'b', 'c')
+HORIZONTAL_COORDS = '123'
 ALLOWED_CHARS = ('x', '0')
+EMPTY_CELL = '_'
 
 
-def is_valid_char(char):
-    return char in ALLOWED_CHARS
+def is_valid_character(character):
+    return character in ALLOWED_CHARS
 
 
-def get_char_input(prompt):
-    return input(prompt).strip().lower()
+def prompt_user_input(message):
+    return input(message).strip().lower()
 
 
-def get_user_choice():
-    user_char = get_char_input('Select char (x, 0): ')
-    while not is_valid_char(user_char):
+def get_user_character():
+    user_char = prompt_user_input('Select char (x, 0): ')
+    while not is_valid_character(user_char):
         print('Character not available')
-        user_char = get_char_input('Select char (x, 0): ')
+        user_char = prompt_user_input('Select char (x, 0): ')
     return user_char
 
 
-def display_field(field):
+def show_game_board(game_board):
     print(' ', '1', '2', '3')
-    for y, v in enumerate(VERTICAL_COORDINATES):
-        print(v, ' '.join(field[y]))
+    for row_index, row_label in enumerate(VERTICAL_COORDS):
+        print(row_label, ' '.join(game_board[row_index]))
 
 
-def is_draw(field):
-    return all('_' not in row for row in field)
+def is_game_draw(game_board):
+    return all(EMPTY_CELL not in row for row in game_board)
 
 
-def get_user_coordinates():
+def get_valid_coordinates():
     while True:
-        coordinates = get_char_input('Input coordinates (e.g., a1): ')
-        if len(coordinates) == 2 and coordinates[0] in VERTICAL_COORDINATES and coordinates[1] in '123':
+        coordinates = prompt_user_input('Input coordinates (e.g., a1): ')
+        if len(coordinates) == 2 and coordinates[0] in VERTICAL_COORDS and coordinates[1] in HORIZONTAL_COORDS:
             return coordinates[0], int(coordinates[1]) - 1
         print('Invalid coordinates. Please try again.')
 
 
-def get_user_move(field):
+def get_player_move(game_board):
     while True:
-        y, x = get_user_coordinates()
-        real_y = VERTICAL_COORDINATES.index(y)
-        if field[real_y][x] == '_':
+        y, x = get_valid_coordinates()
+        real_y = VERTICAL_COORDS.index(y)
+        if game_board[real_y][x] == EMPTY_CELL:
             return x, real_y
         else:
             print('Position not empty')
 
 
-def get_opponent_char(char):
-    return '0' if char == 'x' else 'x'
+def get_opponent_character(character):
+    return '0' if character == 'x' else 'x'
 
 
-def has_winner(char, field):
-    lines = field + list(zip(*field))  # Check rows and columns
-    lines.append([field[i][i] for i in range(3)])  # Check main diagonal
-    lines.append([field[i][2 - i] for i in range(3)])  # Check secondary diagonal
-    return any(line == [char] * 3 for line in lines)
+def check_winner(character, game_board):
+    lines = game_board + list(zip(*game_board))  # Check rows and columns
+    lines.append([game_board[i][i] for i in range(3)])  # Check main diagonal
+    lines.append([game_board[i][2 - i] for i in range(3)])  # Check secondary diagonal
+    return any(line == [character] * 3 for line in lines)
 
 
-def get_computer_move(field):
+def get_random_computer_move(game_board):
     x, y = randint(0, 2), randint(0, 2)
-    while field[y][x] != '_':
+    while game_board[y][x] != EMPTY_CELL:
         x, y = randint(0, 2), randint(0, 2)
     return x, y
 
 
 # Game loop
-game_field = [['_' for x in range(3)] for y in range(3)]
-user_char = get_user_choice()
-computer_char = get_opponent_char(user_char)
+game_board = [[EMPTY_CELL for _ in range(3)] for _ in range(3)]
+user_char = get_user_character()
+computer_char = get_opponent_character(user_char)
 while True:
-    display_field(game_field)
-    if is_draw(game_field):
+    show_game_board(game_board)
+    if is_game_draw(game_board):
         print('The game is a draw.')
         break
-    x, y = get_user_move(game_field)
-    game_field[y][x] = user_char
-    if has_winner(user_char, game_field):
-        display_field(game_field)
+    x, y = get_player_move(game_board)
+    game_board[y][x] = user_char
+    if check_winner(user_char, game_board):
+        show_game_board(game_board)
         print('You win!')
         break
-    if is_draw(game_field):
+    if is_game_draw(game_board):
         print('The game is a draw.')
         break
-    x, y = get_computer_move(game_field)
-    game_field[y][x] = computer_char
-    if has_winner(computer_char, game_field):
-        display_field(game_field)
+    x, y = get_random_computer_move(game_board)
+    game_board[y][x] = computer_char
+    if check_winner(computer_char, game_board):
+        show_game_board(game_board)
         print('You lose.')
         break
