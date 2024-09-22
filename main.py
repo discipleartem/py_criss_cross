@@ -1,4 +1,4 @@
-from random import random
+from random import choice
 
 # Constants
 VERTICAL_COORDS = ('a', 'b', 'c')
@@ -16,11 +16,11 @@ def prompt_user_input(message):
 
 
 def get_user_character():
-    user_char = prompt_user_input('Select char (x, 0): ')
-    while not is_valid_character(user_char):
-        print('Character not available')
+    while True:
         user_char = prompt_user_input('Select char (x, 0): ')
-    return user_char
+        if is_valid_character(user_char):
+            return user_char
+        print('Character not available')
 
 
 def show_game_board(game_board):
@@ -47,8 +47,7 @@ def get_player_move(game_board):
         real_y = VERTICAL_COORDS.index(y)
         if game_board[real_y][x] == EMPTY_CELL:
             return x, real_y
-        else:
-            print('Position not empty')
+        print('Position not empty')
 
 
 def get_opponent_character(character):
@@ -64,32 +63,40 @@ def check_winner(character, game_board):
 
 def get_random_computer_move(game_board):
     empty_cells = [(x, y) for x in range(3) for y in range(3) if game_board[y][x] == EMPTY_CELL]
-    return random.choice(empty_cells) if empty_cells else None
+    return choice(empty_cells) if empty_cells else None
 
 
-# Game loop
-game_board = [[EMPTY_CELL for _ in range(3)] for _ in range(3)]
-user_char = get_user_character()
-computer_char = get_opponent_character(user_char)
+# Game class encapsulating game state and behavior
+class TicTacToeGame:
+    def __init__(self):
+        self.game_board = [[EMPTY_CELL for _ in range(3)] for _ in range(3)]
+        self.user_char = get_user_character()
+        self.computer_char = get_opponent_character(self.user_char)
+
+    def play(self):
+        while True:
+            show_game_board(self.game_board)
+            if is_game_draw(self.game_board):
+                print('The game is a draw.')
+                break
+            x, y = get_player_move(self.game_board)
+            self.game_board[y][x] = self.user_char
+            show_game_board(self.game_board)
+            if check_winner(self.user_char, self.game_board):
+                print('You win!')
+                break
+            if is_game_draw(self.game_board):
+                print('The game is a draw.')
+                break
+            x, y = get_random_computer_move(self.game_board)
+            self.game_board[y][x] = self.computer_char
+            if check_winner(self.computer_char, self.game_board):
+                show_game_board(self.game_board)
+                print('You lose.')
+                break
 
 
-while True:
-    show_game_board(game_board)
-    if is_game_draw(game_board):
-        print('The game is a draw.')
-        break
-    x, y = get_player_move(game_board)
-    game_board[y][x] = user_char
-    show_game_board(game_board)
-    if check_winner(user_char, game_board):
-        print('You win!')
-        break
-    if is_game_draw(game_board):
-        print('The game is a draw.')
-        break
-    x, y = get_random_computer_move(game_board)
-    game_board[y][x] = computer_char
-    if check_winner(computer_char, game_board):
-        show_game_board(game_board)
-        print('You lose.')
-        break
+# Start the game
+if __name__ == "__main__":
+    game = TicTacToeGame()
+    game.play()
