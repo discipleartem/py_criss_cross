@@ -3,7 +3,7 @@ from random import choice
 # Constants
 VERTICAL_COORDS = ('a', 'b', 'c')
 HORIZONTAL_COORDS = '123'
-ALLOWED_CHARS = ('x', '0')
+ALLOWED_CHARS = ('x', 'o')
 EMPTY_CELL = '_'
 
 
@@ -17,16 +17,16 @@ def prompt_user_input(message):
 
 def get_user_character():
     while True:
-        user_char = prompt_user_input('Select char (x, 0): ')
+        user_char = prompt_user_input('Select char (x, o): ')
         if is_valid_character(user_char):
             return user_char
-        print('Character not available')
+        print('Character not available. Please choose either "x" or "o".')
 
 
 def show_game_board(game_board):
-    print(' ', '1', '2', '3')
+    print('  1 2 3')
     for row_index, row_label in enumerate(VERTICAL_COORDS):
-        print(row_label, ' '.join(game_board[row_index]))
+        print(f"{row_label} {' '.join(game_board[row_index])}")
 
 
 def is_game_draw(game_board):
@@ -38,7 +38,7 @@ def get_valid_coordinates():
         coordinates = prompt_user_input('Input coordinates (e.g., a1): ')
         if len(coordinates) == 2 and coordinates[0] in VERTICAL_COORDS and coordinates[1] in HORIZONTAL_COORDS:
             return coordinates[0], int(coordinates[1]) - 1
-        print('Invalid coordinates. Ensure input format "a1".')
+        print('Invalid coordinates. Ensure input format "a1". Example positions: "a1", "b2".')
 
 
 def get_player_move(game_board):
@@ -47,11 +47,11 @@ def get_player_move(game_board):
         real_y = VERTICAL_COORDS.index(y)
         if game_board[real_y][x] == EMPTY_CELL:
             return x, real_y
-        print('Position not empty')
+        print('Position not empty. Please choose an empty cell.')
 
 
 def get_opponent_character(character):
-    return '0' if character == 'x' else 'x'
+    return 'o' if character == 'x' else 'x'
 
 
 def check_winner(character, game_board):
@@ -84,6 +84,9 @@ class TicTacToeGame:
             show_game_board(self.game_board)
             if check_winner(self.user_char, self.game_board):
                 print('You win!')
+                break
+            if is_game_draw(self.game_board):
+                print('The game is a draw.')
                 break
             x, y = get_random_computer_move(self.game_board)
             self.game_board[y][x] = self.computer_char
