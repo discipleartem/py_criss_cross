@@ -5,6 +5,7 @@ VERTICAL_COORDS = ('a', 'b', 'c')
 HORIZONTAL_COORDS = '123'
 ALLOWED_CHARS = ('x', 'o')
 EMPTY_CELL = '_'
+BOARD_SIZE = 3  # Added constant for board size
 
 
 def is_valid_character(char):
@@ -56,20 +57,19 @@ def get_computer_character(user_char):
 
 def has_winner(char, board):
     lines = board + list(zip(*board))  # Check rows and columns
-    lines.append([board[i][i] for i in range(3)])  # Check main diagonal
-    lines.append([board[i][2 - i] for i in range(3)])  # Check secondary diagonal
-    return any(line == [char] * 3 for line in lines)
+    lines.append([board[i][i] for i in range(BOARD_SIZE)])  # Check main diagonal
+    lines.append([board[i][BOARD_SIZE - 1 - i] for i in range(BOARD_SIZE)])  # Check secondary diagonal
+    return any(line == [char] * BOARD_SIZE for line in lines)
 
 
 def get_random_move_for_computer(board):
-    empty_cells = [(x, y) for x in range(3) for y in range(3) if board[y][x] == EMPTY_CELL]
+    empty_cells = [(x, y) for x in range(BOARD_SIZE) for y in range(BOARD_SIZE) if board[y][x] == EMPTY_CELL]
     return choice(empty_cells) if empty_cells else None
 
 
-# Game class encapsulating game state and behavior
 class TicTacToeGame:
     def __init__(self):
-        self.board = [[EMPTY_CELL for _ in range(3)] for _ in range(3)]
+        self.board = [[EMPTY_CELL for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
         self.user_char = get_character_from_user()
         self.computer_char = get_computer_character(self.user_char)
 
@@ -87,8 +87,8 @@ class TicTacToeGame:
                 print('The game is a draw.')
                 break
             self.computer_turn()
+            self.show_board()  # Move display call here
             if self.check_winner(self.computer_char):
-                self.show_board()
                 print('You lose.')
                 break
 
@@ -101,7 +101,6 @@ class TicTacToeGame:
     def user_turn(self):
         x, y = get_player_move(self.board)
         self.board[y][x] = self.user_char
-        self.show_board()
 
     def computer_turn(self):
         move = get_random_move_for_computer(self.board)
