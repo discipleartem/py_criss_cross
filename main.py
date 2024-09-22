@@ -1,119 +1,118 @@
-from random import randint
+from random import choice
 
-VERTICAL_COORDINATES = ('a', 'b', 'c')
-
-
-def select_char():
-    return input('Select char (x, 0): '.strip(' ').lower())
-
-
-def get_user_char():
-    char = select_char()
-
-    while char not in ('x', '0'):
-        print('Not available char')
-        char = select_char()
-    return char
+# Constants
+VERTICAL_COORDS = ('a', 'b', 'c')
+HORIZONTAL_COORDS = '123'
+ALLOWED_CHARS = ('x', 'o')
+EMPTY_CELL = '_'
+BOARD_SIZE = 3  # Added constant for board size
 
 
-def show_field(field):
-    print(' ', '1', '2', '3')
-    for y, v in enumerate(VERTICAL_COORDINATES):
-        print(v, ' '.join(field[y]))
+def is_valid_character(char):
+    return char in ALLOWED_CHARS
 
 
-def is_draw(field):
-    count = 0
-    for y in range(3):
-        count += 1 if '_' in field[y] else 0
-    return count == 0
+def prompt_user_input(message):
+    return input(message).strip().lower()
 
 
-def input_coordinates():
-    return input('Input coordinates: ').lower().strip(' ')
-
-
-def get_user_position(field):
-    real_x, real_y = None, None
-
+def get_character_from_user():
     while True:
-        y, x = tuple(input_coordinates())
-
-        if int(x) not in range(1, 4) or y not in VERTICAL_COORDINATES:
-            print('Not available coordinates')
-            continue
-
-        real_x, real_y = int(x) - 1, VERTICAL_COORDINATES.index(y)
-        if field[real_y][real_x] == '_':
-            break
-        else:
-            print('Position not empty')
-    return real_x, real_y
+        user_char = prompt_user_input('Select char (x, o): ')
+        if is_valid_character(user_char):
+            return user_char
+        print('Character not available. Please choose either "x" or "o".')
 
 
-def get_opponent_char(char):
-    return '0' if char == 'x' else 'x'
-
-def is_win(char, field):
-    opponent_char = get_opponent_char(char)
-
-    #check lines
-    for y in range(3):
-        if opponent_char not in field[y] and '_' not in field[y]:
-            return True
-
-   #check column
-    for x in range(3):
-        col = [field[0][x], field[1][x], field[2][x]]
-        if opponent_char not in col and '_' not in col:
-            return True
-
-    #check diagonal
-    first_cross_line = [field[0][0], field[1][1], field[2][2]]
-    if opponent_char not in first_cross_line and '_' not in first_cross_line:
-        return True
-
-    second_cross_line = [field[0][2], field[1][1], field[2][0]]
-    if opponent_char not in second_cross_line and '_' not in second_cross_line:
-        return True
-
-    return False
-
-static_field = [
-    ['_' for x in range(3)] for y in range(3)
-]
-
-user_char = get_user_char()
-computer_char = get_opponent_char(user_char)
+def display_game_board(board):
+    print('  1 2 3')
+    for row_index, row_label in enumerate(VERTICAL_COORDS):
+        print(f"{row_label} {' '.join(board[row_index])}")
 
 
-def get_computer_position(field):
-    x, y = randint(0, 2), randint(0, 2)
-    while field[y][x] != '_':
-        x, y = randint(0, 2), randint(0, 2)
-    return x, y
+def is_draw(board):
+    return all(EMPTY_CELL not in row for row in board)
 
 
-while True:
-    show_field(static_field)
-    if is_draw(static_field):
-        print('is Draw')
-        break
+def get_coordinates():
+    while True:
+        coordinates = prompt_user_input('Input coordinates (e.g., a1): ')
+        if len(coordinates) == 2 and coordinates[0] in VERTICAL_COORDS and coordinates[1] in HORIZONTAL_COORDS:
+            return coordinates[0], int(coordinates[1]) - 1
+        print('Invalid coordinates. Ensure input format "a1". Example positions: "a1", "b2".')
 
 
-    x, y = get_user_position(static_field)
-    static_field[y][x] = user_char
+def get_player_move(board):
+    while True:
+        y, x = get_coordinates()
+        real_y = VERTICAL_COORDS.index(y)
+        if board[real_y][x] == EMPTY_CELL:
+            return x, real_y
+        print('Position not empty. Please choose an empty cell.')
 
-    if is_win(user_char, static_field):
-        show_field(static_field)
-        print('You win')
-        break
+
+def get_computer_character(user_char):
+    return 'o' if user_char == 'x' else 'x'
 
 
-    x, y = get_computer_position(static_field)
-    static_field[y][x] = computer_char
+def has_winner(char, board):
+    lines = board + list(zip(*board))  # Check rows and columns
+    lines.append([board[i][i] for i in range(BOARD_SIZE)])  # Check main diagonal
+    lines.append([board[i][BOARD_SIZE - 1 - i] for i in range(BOARD_SIZE)])  # Check secondary diagonal
+    return any(line == [char] * BOARD_SIZE for line in lines)
 
-    if is_win(computer_char, static_field):
-        show_field(static_field)
-        print('You lose')
-        break
+
+def get_random_move_for_computer(board):
+    empty_cells = [(x, y) for x in range(BOARD_SIZE) for y in range(BOARD_SIZE) if board[y][x] == EMPTY_CELL]
+    return choice(empty_cells) if empty_cells else None
+
+
+class TicTacToeGame:
+    def __init__(self):
+        self.board = [[EMPTY_CELL for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+        self.user_char = get_character_from_user()
+        self.computer_char = get_computer_character(self.user_char)
+
+    def play(self):
+        while True:
+            self.show_board()
+            if self.is_draw():
+                print('The game is a draw.')
+                break
+            self.user_turn()
+            if self.check_winner(self.user_char):
+                print('You win!')
+                break
+            if self.is_draw():
+                print('The game is a draw.')
+                break
+            self.computer_turn()
+            self.show_board()  # Move display call here
+            if self.check_winner(self.computer_char):
+                print('You lose.')
+                break
+
+    def show_board(self):
+        display_game_board(self.board)
+
+    def is_draw(self):
+        return is_draw(self.board)
+
+    def user_turn(self):
+        x, y = get_player_move(self.board)
+        self.board[y][x] = self.user_char
+
+    def computer_turn(self):
+        move = get_random_move_for_computer(self.board)
+        if move:
+            x, y = move
+            self.board[y][x] = self.computer_char
+
+    def check_winner(self, char):
+        return has_winner(char, self.board)
+
+
+# Start the game
+if __name__ == "__main__":
+    game = TicTacToeGame()
+    game.play()
