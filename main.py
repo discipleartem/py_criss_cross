@@ -85,9 +85,6 @@ class TicTacToeGame:
             if check_winner(self.user_char, self.game_board):
                 print('You win!')
                 break
-            if is_game_draw(self.game_board):
-                print('The game is a draw.')
-                break
             x, y = get_random_computer_move(self.game_board)
             self.game_board[y][x] = self.computer_char
             if check_winner(self.computer_char, self.game_board):
