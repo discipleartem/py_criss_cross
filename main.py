@@ -1,4 +1,4 @@
-from random import randint
+from random import random
 
 # Constants
 VERTICAL_COORDS = ('a', 'b', 'c')
@@ -38,7 +38,7 @@ def get_valid_coordinates():
         coordinates = prompt_user_input('Input coordinates (e.g., a1): ')
         if len(coordinates) == 2 and coordinates[0] in VERTICAL_COORDS and coordinates[1] in HORIZONTAL_COORDS:
             return coordinates[0], int(coordinates[1]) - 1
-        print('Invalid coordinates. Please try again.')
+        print('Invalid coordinates. Ensure input format "a1".')
 
 
 def get_player_move(game_board):
@@ -63,16 +63,16 @@ def check_winner(character, game_board):
 
 
 def get_random_computer_move(game_board):
-    x, y = randint(0, 2), randint(0, 2)
-    while game_board[y][x] != EMPTY_CELL:
-        x, y = randint(0, 2), randint(0, 2)
-    return x, y
+    empty_cells = [(x, y) for x in range(3) for y in range(3) if game_board[y][x] == EMPTY_CELL]
+    return random.choice(empty_cells) if empty_cells else None
 
 
 # Game loop
 game_board = [[EMPTY_CELL for _ in range(3)] for _ in range(3)]
 user_char = get_user_character()
 computer_char = get_opponent_character(user_char)
+
+
 while True:
     show_game_board(game_board)
     if is_game_draw(game_board):
@@ -80,8 +80,8 @@ while True:
         break
     x, y = get_player_move(game_board)
     game_board[y][x] = user_char
+    show_game_board(game_board)
     if check_winner(user_char, game_board):
-        show_game_board(game_board)
         print('You win!')
         break
     if is_game_draw(game_board):
