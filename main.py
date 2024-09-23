@@ -87,7 +87,7 @@ class TicTacToeGame:
                 print('The game is a draw.')
                 break
             self.computer_turn()
-            self.show_board()  # Move display call here
+            self.show_board()
             if self.check_winner(self.computer_char):
                 print('You lose.')
                 break
