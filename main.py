@@ -56,7 +56,7 @@ def get_computer_character(user_char):
 
 
 def has_winner(char, board):
-    lines = board + list(zip(*board))  # Check rows and columns
+    lines = board[:] + [list(col) for col in zip(*board)]  # Check rows and columns
     lines.append([board[i][i] for i in range(BOARD_SIZE)])  # Check main diagonal
     lines.append([board[i][BOARD_SIZE - 1 - i] for i in range(BOARD_SIZE)])  # Check secondary diagonal
     return any(line == [char] * BOARD_SIZE for line in lines)
@@ -74,12 +74,10 @@ class TicTacToeGame:
         self.computer_char = get_computer_character(self.user_char)
 
     def play(self):
+        self.display_board()
         while True:
-            self.show_board()
-            if self.is_draw():
-                print('The game is a draw.')
-                break
             self.user_turn()
+            self.display_board()
             if self.check_winner(self.user_char):
                 print('You win!')
                 break
@@ -87,12 +85,15 @@ class TicTacToeGame:
                 print('The game is a draw.')
                 break
             self.computer_turn()
-            self.show_board()
+            self.display_board()
             if self.check_winner(self.computer_char):
                 print('You lose.')
                 break
+            if self.is_draw():
+                print('The game is a draw.')
+                break
 
-    def show_board(self):
+    def display_board(self):
         display_game_board(self.board)
 
     def is_draw(self):
