@@ -73,7 +73,7 @@ class TicTacToeGame:
         return 'o' if user_char == 'x' else 'x'
 
     @staticmethod
-    def get_random_move_for_computer(board):
+    def get_random_move_for_computer(board):  # Fixed parameter to match calling convention
         empty_cells = [(x, y) for x in range(BOARD_SIZE) for y in range(BOARD_SIZE) if board[y][x] == EMPTY_CELL]
         return choice(empty_cells) if empty_cells else None
 
