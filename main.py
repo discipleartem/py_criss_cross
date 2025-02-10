@@ -31,12 +31,17 @@ def game():
 
 def choose_symbol(player):
     print(f'Выберите символ для {player}: x или o')
-    symbol = input()
-    #TODO: проверка ввода на  х, o
+    symbol = validate_symbol()
     return symbol
 
 
-
+def validate_symbol():
+    symbol = input().lower().strip()  # lower() - приводит к нижнему регистру, strip() - удаляет пробелы
+    if symbol == 'x' or symbol == 'o':
+        return symbol
+    else:
+        print('Неверный символ. Попробуйте еще раз.')
+        return validate_symbol()
 
 
 if __name__ == '__main__':
