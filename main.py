@@ -25,7 +25,7 @@ def game():
     print('Игра крестики-нолики')
 
     player1 = choose_symbol('player1')
-    # print(player1)
+    player2 = choose_symbol('player2') #TODO: добавить проверку на то, что игрок не выбрал символ, который уже был выбран другим игроком
     # print('Введите координаты хода в формате "a1"')
 
 
