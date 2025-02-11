@@ -27,24 +27,29 @@ def game():
 
     player1 = choose_symbol('player1')
     player2 = choose_symbol('player2')
-    # print('Введите координаты хода в формате "a1"')
+    print(player1, player2)
 
 
 def choose_symbol(player):
-    print(f'Выберите символ для {player}: x или o')
-    symbol = validate_symbol()
-    return symbol
+    if len(ALLOWED_SYMBOLS) == 1:
+        print(f'{player} вам достался символ: {ALLOWED_SYMBOLS[0]}')
+        return ALLOWED_SYMBOLS[0]
+    else:
+        print(f'Выберите символ для {player}: x или o')
+        symbol = validate_symbol()
+        return symbol
 
 
 def validate_symbol():
     symbol = input().lower().strip()  # lower() - приводит к нижнему регистру, strip() - удаляет пробелы
-    if symbol in ALLOWED_SYMBOLS:
-        ALLOWED_SYMBOLS.remove(symbol)  # удаляем выбранный символ из списка доступных символов
-        return symbol
-    else:
-        # TODO: переделать вывод ошибки чтобы было более понятно или символ уже был использован или введен некорректно
-        print('Неверный символ или использован другим игроком. Попробуйте еще раз.')
+
+    if symbol not in ALLOWED_SYMBOLS:
+        print(f"Некорректный символ! Выберите один из: {ALLOWED_SYMBOLS} [en]")
         return validate_symbol()
+
+    if len(ALLOWED_SYMBOLS) > 1:
+        ALLOWED_SYMBOLS.remove(symbol)  # удаляем выбранный символ из списка доступных символов
+    return symbol
 
 
 if __name__ == '__main__':
