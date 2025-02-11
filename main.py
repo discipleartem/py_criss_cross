@@ -20,12 +20,13 @@
 """
 # Игровое поле можно представить в виде словаря с ключами a, b, c и значениями в виде списка [].
 FIELD = {'a': [], 'b': [], 'c': []}
+ALLOWED_SYMBOLS = ['x', 'o']
 
 def game():
     print('Игра крестики-нолики')
 
     player1 = choose_symbol('player1')
-    player2 = choose_symbol('player2') #TODO: добавить проверку на то, что игрок не выбрал символ, который уже был выбран другим игроком
+    player2 = choose_symbol('player2')
     # print('Введите координаты хода в формате "a1"')
 
 
@@ -37,10 +38,12 @@ def choose_symbol(player):
 
 def validate_symbol():
     symbol = input().lower().strip()  # lower() - приводит к нижнему регистру, strip() - удаляет пробелы
-    if symbol == 'x' or symbol == 'o':
+    if symbol in ALLOWED_SYMBOLS:
+        ALLOWED_SYMBOLS.remove(symbol)  # удаляем выбранный символ из списка доступных символов
         return symbol
     else:
-        print('Неверный символ. Попробуйте еще раз.')
+        # TODO: переделать вывод ошибки чтобы было более понятно или символ уже был использован или введен некорректно
+        print('Неверный символ или использован другим игроком. Попробуйте еще раз.')
         return validate_symbol()
 
 
