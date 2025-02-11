@@ -24,19 +24,21 @@ def order(sym1, sym2):
     print(f'Первый ходит игрок player1 с символом {sym1}')
 
     while True:
-        player1_cor = input('Введите координаты для первого игрока: ')
+        # Ход первого игрока
+        make_move("player1", sym1)
 
-        FIELD[int(player1_cor)] = sym1
-        print(FIELD)
+        # Ход второго игрока
+        make_move("player2", sym2)
 
-        player2_cor = input('Введите координаты для второго игрока: ')
-        FIELD[int(player2_cor)] = sym2
-        print(FIELD)
-
-        #TODO: рефактор переключение ходов (DRY)
         #TODO: проверка на занятость клетки
         #TODO: проверка на победу
         #TODO: проверка на ничью
+
+def make_move(player, symbol):
+    player_cor = input(f'Введите координаты для {player}: ')
+    FIELD[int(player_cor)] = symbol
+    print(FIELD)
+
 
 if __name__ == '__main__':
     game()
