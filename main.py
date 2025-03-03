@@ -6,10 +6,19 @@
 - проверка на победу
 - проверка на ничью
 """
+
+"""выигрышные последовательности
+0 1 2   3 4 5    6 7 8
+0 3 6   1 4 7    2 5 8
+0 4 8   2 4 6
+"""
+
+
+
 # Игровое поле можно представить в виде списка [].
 FIELD = [None, None, None,
-         None,None,None,
-         None,None,None]
+         None, None, None,
+         None, None, None]
 
 
 def game():
@@ -26,13 +35,22 @@ def order(sym1, sym2):
     while True:
         # Ход первого игрока
         make_move("player1", sym1)
+        if is_win():
+            print(f'Победил игрок player1')
+            break
+
+        elif draw():
+            print('Ничья')
+            break
 
         # Ход второго игрока
         make_move("player2", sym2)
+        if is_win():
+            print(f'Победил игрок player2')
+            break
 
 
-        #TODO: проверка на победу
-        #TODO: проверка на ничью
+
 
 def make_move(player, symbol):
     while True:
@@ -51,6 +69,29 @@ def is_presence(player_cor):
     else:
         return True
 
+#TODO: проверка на победу
+def is_win():
+    # горизонтальные последовательности
+    if FIELD[0] == FIELD[1] == FIELD[2] or \
+       FIELD[3] == FIELD[4] == FIELD[5] or \
+       FIELD[6] == FIELD[7] == FIELD[8]:
+        return True
+
+    # вертикальные последовательности
+    elif FIELD[0] == FIELD[3] == FIELD[6] or \
+       FIELD[1] == FIELD[4] == FIELD[7] or \
+       FIELD[2] == FIELD[5] == FIELD[8]:
+        return True
+
+    # диагональные последовательности
+    elif FIELD[0] == FIELD[4] == FIELD[8] or \
+       FIELD[2] == FIELD[4] == FIELD[6]:
+        return True
+
+
+#TODO: проверка на ничью
+def draw():
+    pass
 
 if __name__ == '__main__':
     game()
