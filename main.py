@@ -69,25 +69,16 @@ def is_presence(player_cor):
     else:
         return True
 
-#TODO: проверка на победу
 def is_win():
-    # горизонтальные последовательности
-    if FIELD[0] == FIELD[1] == FIELD[2] or \
-       FIELD[3] == FIELD[4] == FIELD[5] or \
-       FIELD[6] == FIELD[7] == FIELD[8]:
-        return True
+    # Создаем кортежи для проверки комбинаций
+    rows = ((0, 1, 2), (3, 4, 5), (6, 7, 8))  # горизонтали
+    cols = ((0, 3, 6), (1, 4, 7), (2, 5, 8))  # вертикали
+    diags = ((0, 4, 8), (2, 4, 6))  # диагонали
 
-    # вертикальные последовательности
-    elif FIELD[0] == FIELD[3] == FIELD[6] or \
-       FIELD[1] == FIELD[4] == FIELD[7] or \
-       FIELD[2] == FIELD[5] == FIELD[8]:
-        return True
-
-    # диагональные последовательности
-    elif FIELD[0] == FIELD[4] == FIELD[8] or \
-       FIELD[2] == FIELD[4] == FIELD[6]:
-        return True
-
+    for combination in rows + cols + diags:
+        if FIELD[combination[0]] == FIELD[combination[1]] == FIELD[combination[2]] is not None:
+            return True
+    return False
 
 #TODO: проверка на ничью
 def draw():
