@@ -42,6 +42,7 @@ def order(sym1, sym2):
     while True:
         # Ход первого игрока
         make_move("player1", sym1)
+        display_field()
         if is_win():
             print(f'Победил игрок player1')
             break
@@ -52,6 +53,7 @@ def order(sym1, sym2):
 
         # Ход второго игрока
         make_move("player2", sym2)
+        display_field()
         if is_win():
             print(f'Победил игрок player2')
             break
@@ -64,14 +66,14 @@ def make_move(player, symbol):
             break
 
     FIELD[int(player_cor)] = symbol #int() - преобразование в число ибо индекс списка int, а input() - строка
-    display_field()
+
 
 def display_field():
-    FIELD2 = list(map(lambda x: '_' if x is None else x, FIELD))
+    field = list(map(lambda x: '_' if x is None else x, FIELD))
     print('------------')
-    print(f"| {FIELD2[0]} | {FIELD2[1]} | {FIELD2[2]} |")
-    print(f"| {FIELD2[3]} | {FIELD2[4]} | {FIELD2[5]} |")
-    print(f"| {FIELD2[6]} | {FIELD2[7]} | {FIELD2[8]} |")
+    print(f"| {field[0]} | {field[1]} | {field[2]} |")
+    print(f"| {field[3]} | {field[4]} | {field[5]} |")
+    print(f"| {field[6]} | {field[7]} | {field[8]} |")
     print('------------')
 
 def is_presence(player_cor):
@@ -82,7 +84,7 @@ def is_presence(player_cor):
         return True
 
 def is_win():
-    # Создаем кортежи для проверки комбинаций
+    # Создаем кортежи для проверки выигрышных комбинаций
     rows = ((0, 1, 2), (3, 4, 5), (6, 7, 8))  # горизонтали
     cols = ((0, 3, 6), (1, 4, 7), (2, 5, 8))  # вертикали
     diags = ((0, 4, 8), (2, 4, 6))  # диагонали
@@ -92,9 +94,9 @@ def is_win():
             return True
     return False
 
-
+# проверка на ничью
 def is_draw():
-    return None not in FIELD
+    return None not in FIELD #None - это пустая клетка, если все клетки заполнены, то None не будет
 
 if __name__ == '__main__':
     game()
