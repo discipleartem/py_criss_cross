@@ -5,6 +5,9 @@
 - проверка на занятость клетки
 - проверка на победу
 - проверка на ничью
+
+Дополнительные задачи:
+- добавить возможность выбора режима игры (два игрока, компьютер против игрока и т.д.)
 """
 
 """выигрышные последовательности
@@ -13,7 +16,10 @@
 0 4 8   2 4 6
 """
 
+#сравнить https://github.com/samalexpro375/TicTacToe.git
 
+
+# TODO: рефакторизация
 
 # Игровое поле можно представить в виде списка [].
 FIELD = [None, None, None,
@@ -26,6 +32,7 @@ def game():
 
     player1_sym = input('Выберите символ для первого игрока (x или o): ')
     player2_sym = input('Выберите символ для второго игрока (x или o): ')
+    #TODO: добавить проверку на ввод символа
 
     order(player1_sym, player2_sym)
 
@@ -57,8 +64,15 @@ def make_move(player, symbol):
             break
 
     FIELD[int(player_cor)] = symbol #int() - преобразование в число ибо индекс списка int, а input() - строка
-    print(FIELD)
+    display_field()
 
+def display_field():
+    FIELD2 = list(map(lambda x: '_' if x is None else x, FIELD))
+    print('------------')
+    print(f"| {FIELD2[0]} | {FIELD2[1]} | {FIELD2[2]} |")
+    print(f"| {FIELD2[3]} | {FIELD2[4]} | {FIELD2[5]} |")
+    print(f"| {FIELD2[6]} | {FIELD2[7]} | {FIELD2[8]} |")
+    print('------------')
 
 def is_presence(player_cor):
     if FIELD[int(player_cor)] is not None:
