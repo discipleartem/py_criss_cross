@@ -6,7 +6,7 @@
 - проверка на победу
 - проверка на ничью
 """
-# Игровое поле можно представить в виде словаря с ключами a, b, c и значениями в виде списка [].
+# Игровое поле можно представить в виде списка [].
 FIELD = [None, None, None,
          None,None,None,
          None,None,None]
@@ -30,14 +30,26 @@ def order(sym1, sym2):
         # Ход второго игрока
         make_move("player2", sym2)
 
-        #TODO: проверка на занятость клетки
+
         #TODO: проверка на победу
         #TODO: проверка на ничью
 
 def make_move(player, symbol):
-    player_cor = input(f'Введите координаты для {player}: ')
-    FIELD[int(player_cor)] = symbol
+    while True:
+        player_cor = input(f'Введите координаты для {player}: ')
+        if is_presence(player_cor):
+            break
+
+    FIELD[int(player_cor)] = symbol #int() - преобразование в число ибо индекс списка int, а input() - строка
     print(FIELD)
+
+
+def is_presence(player_cor):
+    if FIELD[int(player_cor)] is not None:
+        print(f"Клетка занята {FIELD[int(player_cor)]}")
+        return False
+    else:
+        return True
 
 
 if __name__ == '__main__':
