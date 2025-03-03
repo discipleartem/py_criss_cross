@@ -39,7 +39,7 @@ def order(sym1, sym2):
             print(f'Победил игрок player1')
             break
 
-        elif draw():
+        elif is_draw():
             print('Ничья')
             break
 
@@ -48,8 +48,6 @@ def order(sym1, sym2):
         if is_win():
             print(f'Победил игрок player2')
             break
-
-
 
 
 def make_move(player, symbol):
@@ -80,9 +78,9 @@ def is_win():
             return True
     return False
 
-#TODO: проверка на ничью
-def draw():
-    pass
+
+def is_draw():
+    return None not in FIELD
 
 if __name__ == '__main__':
     game()
