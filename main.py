@@ -16,6 +16,15 @@
 0 4 8   2 4 6
 """
 
+"""
+расположение цифровой клавиатуры
+------------
+| 7 | 8 | 9 |
+| 4 | 5 | 6 |
+| 1 | 2 | 3 |
+------------
+"""
+
 #сравнить https://github.com/samalexpro375/TicTacToe.git
 
 
@@ -29,7 +38,6 @@ FIELD = [None, None, None,
 
 def game():
     print('Игра крестики-нолики')
-
     player1_sym , player2_sym = choose_sym()
     order(player1_sym, player2_sym)
 
@@ -51,10 +59,10 @@ def order(sym1, sym2):
 
     while True:
         # Ход первого игрока
-        make_move("player1", sym1)
+        make_move("игрок_1", sym1)
         display_field()
         if is_win():
-            print(f'Победил игрок player1')
+            print(f'Победил игрок_1')
             break
 
         elif is_draw():
@@ -62,20 +70,76 @@ def order(sym1, sym2):
             break
 
         # Ход второго игрока
-        make_move("player2", sym2)
+        make_move("игрок_2", sym2)
         display_field()
         if is_win():
-            print(f'Победил игрок player2')
+            print(f'Победил игрок_2')
             break
 
 
 def make_move(player, symbol):
     while True:
         player_cor = input(f'Введите координаты для {player}: ')
-        if is_presence(player_cor):
-            break
 
-    FIELD[int(player_cor)] = symbol #int() - преобразование в число ибо индекс списка int, а input() - строка
+        match player_cor:
+            case '7':
+                if not is_presence(FIELD[0]):
+                    FIELD[0] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '8':
+                if not is_presence(FIELD[1]):
+                    FIELD[1] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '9':
+                if not is_presence(FIELD[2]):
+                    FIELD[2] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '4':
+                if not is_presence(FIELD[3]):
+                    FIELD[3] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '5':
+                if not is_presence(FIELD[4]):
+                    FIELD[4] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '6':
+                if not is_presence(FIELD[5]):
+                    FIELD[5] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '1':
+                if not is_presence(FIELD[6]):
+                    FIELD[6] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '2':
+                if not is_presence(FIELD[7]):
+                    FIELD[7] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case '3':
+                if not is_presence(FIELD[8]):
+                    FIELD[8] = symbol
+                    break
+                else:
+                    print("Эта клетка уже занята!")
+            case _:
+                print('Неверный символ, только цифры от 1 до 9')
+                continue
+
 
 
 def display_field():
@@ -86,12 +150,8 @@ def display_field():
     print(f"| {field[6]} | {field[7]} | {field[8]} |")
     print('------------')
 
-def is_presence(player_cor):
-    if FIELD[int(player_cor)] is not None:
-        print(f"Клетка занята {FIELD[int(player_cor)]}")
-        return False
-    else:
-        return True
+def is_presence(cell):
+    return cell is not None
 
 def is_win():
     # Создаем кортежи для проверки выигрышных комбинаций
