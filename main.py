@@ -81,6 +81,12 @@ def make_move(player, symbol):
     while True:
         player_cor = input(f'Введите координаты для {player}: ')
 
+        #TODO: переписать
+        """#numpad_to_index = {
+            '7': 0, '8': 1, '9': 2,
+            '4': 3, '5': 4, '6': 5,
+            '1': 6, '2': 7, '3': 8
+        }"""
         match player_cor:
             case '7':
                 if not is_presence(FIELD[0]):
