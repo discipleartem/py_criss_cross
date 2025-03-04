@@ -30,14 +30,24 @@ FIELD = [None, None, None,
 def game():
     print('Игра крестики-нолики')
 
-    player1_sym = input('Выберите символ для первого игрока (x или o): ')
-    player2_sym = input('Выберите символ для второго игрока (x или o): ')
-    #TODO: добавить проверку на ввод символа
-
+    player1_sym , player2_sym = choose_sym()
     order(player1_sym, player2_sym)
 
+
+def choose_sym():
+    ALLOWED_SYMBOLS = ('x', 'o')
+    while True:
+        player1_sym = input('Выберите символ для первого игрока (x или o): ').lower()
+        if player1_sym in ALLOWED_SYMBOLS:
+            player2_sym = 'o' if player1_sym == 'x' else 'x'
+            print(f'игроку_1 присвоено "{player1_sym}", игроку_2 присвоено "{player2_sym}"')
+            return player1_sym, player2_sym
+        else:
+            print('Неверный символ, только "x" или "o" (en)')
+
+
 def order(sym1, sym2):
-    print(f'Первый ходит игрок player1 с символом {sym1}')
+    print(f'Первый ходит игрок_1 с символом "{sym1}"')
 
     while True:
         # Ход первого игрока
