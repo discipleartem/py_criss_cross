@@ -16,19 +16,11 @@
 0 4 8   2 4 6
 """
 
-"""
-расположение цифровой клавиатуры
-------------
-| 7 | 8 | 9 |
-| 4 | 5 | 6 |
-| 1 | 2 | 3 |
-------------
-"""
+
 
 #сравнить https://github.com/samalexpro375/TicTacToe.git
 
 
-# TODO: рефакторизация
 
 # Игровое поле можно представить в виде списка [].
 FIELD = [None, None, None,
@@ -45,7 +37,7 @@ def game():
 def choose_sym():
     ALLOWED_SYMBOLS = ('x', 'o')
     while True:
-        player1_sym = input('Выберите символ для первого игрока (x или o): ').lower()
+        player1_sym = input('Выберите символ для первого игрока (x или o): ').strip().lower()
         if player1_sym in ALLOWED_SYMBOLS:
             player2_sym = 'o' if player1_sym == 'x' else 'x'
             print(f'игроку_1 присвоено "{player1_sym}", игроку_2 присвоено "{player2_sym}"')
@@ -59,6 +51,7 @@ def order(sym1, sym2):
 
     while True:
         # Ход первого игрока
+        display_field()
         make_move("игрок_1", sym1)
         display_field()
         if is_win():
@@ -79,76 +72,33 @@ def order(sym1, sym2):
 
 def make_move(player, symbol):
     while True:
-        player_cor = input(f'Введите координаты для {player}: ')
+        player_cor = input(f'Введите координаты для {player}: ').strip().lower()
 
-        #TODO: переписать
-        """#numpad_to_index = {
+        numpad_to_index = {
             '7': 0, '8': 1, '9': 2,
             '4': 3, '5': 4, '6': 5,
             '1': 6, '2': 7, '3': 8
-        }"""
-        match player_cor:
-            case '7':
-                if not is_presence(FIELD[0]):
-                    FIELD[0] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '8':
-                if not is_presence(FIELD[1]):
-                    FIELD[1] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '9':
-                if not is_presence(FIELD[2]):
-                    FIELD[2] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '4':
-                if not is_presence(FIELD[3]):
-                    FIELD[3] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '5':
-                if not is_presence(FIELD[4]):
-                    FIELD[4] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '6':
-                if not is_presence(FIELD[5]):
-                    FIELD[5] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '1':
-                if not is_presence(FIELD[6]):
-                    FIELD[6] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '2':
-                if not is_presence(FIELD[7]):
-                    FIELD[7] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case '3':
-                if not is_presence(FIELD[8]):
-                    FIELD[8] = symbol
-                    break
-                else:
-                    print("Эта клетка уже занята!")
-            case _:
-                print('Неверный символ, только цифры от 1 до 9')
-                continue
+        }
+
+        if player_cor in numpad_to_index:
+            cell = numpad_to_index[player_cor]
+            if is_presence(FIELD[cell]):
+                print('Клетка занята')
+            else:
+                FIELD[cell] = symbol
+                break
+        else:
+            print('Неверные координаты, введите цифры от 1 до 9')
 
 
 
 def display_field():
+    print("""для координат вы можете использовать расположение цифровой клавиатуры:
+------------
+| 7 | 8 | 9 |
+| 4 | 5 | 6 |
+| 1 | 2 | 3 |
+------------""")
     field = list(map(lambda x: '_' if x is None else x, FIELD))
     print('------------')
     print(f"| {field[0]} | {field[1]} | {field[2]} |")
