@@ -1,106 +1,128 @@
-from random import randint
+"""
+Задача: написать игру крестики-нолики для двух игроков.
+- Добавить возможность выбора символа (x или o) и ходов.
+- Режим игры два игрока
+- проверка на занятость клетки
+- проверка на победу
+- проверка на ничью
+
+Дополнительные задачи:
+- добавить возможность выбора режима игры (два игрока, компьютер против игрока и т.д.)
+"""
+
+"""выигрышные последовательности
+0 1 2   3 4 5    6 7 8
+0 3 6   1 4 7    2 5 8
+0 4 8   2 4 6
+"""
 
 
-VERTICAL_COORDINATS = ('a', 'b', 'c')
 
-def get_user_char():
-    user_char = input('Select char (x, 0): ').strip(' ').lower()
-    while user_char not in ('x', '0'):
-        print('Not available char')
-        user_char = input('Select char (x, 0): ').strip(' ').lower()
-    return user_char
-
-def show_field(field):
-    print(' ', '1', '2', '3')
-    for y, v in enumerate(VERTICAL_COORDINATS):
-        print(v, ' '.join(field[y]))
+#сравнить https://github.com/samalexpro375/TicTacToe.git
 
 
-def is_draw(field):
-    count = 0
-    for y in range(3):
-        count += 1 if '_' in field[y] else 0
-    return count == 0
+
+# Игровое поле можно представить в виде списка [].
+FIELD = [None, None, None,
+         None, None, None,
+         None, None, None]
 
 
-def get_user_position(field):
-    real_x, real_y = None, None
+def game():
+    print('Игра крестики-нолики')
+    player1_sym , player2_sym = choose_sym()
+    order(player1_sym, player2_sym)
+
+
+def choose_sym():
+    ALLOWED_SYMBOLS = ('x', 'o')
     while True:
-        coordinats = input('Input coordinats: ').lower().strip(' ')
-        y, x = tuple(coordinats)
-
-        if int(x) not in range(1, 4) or y not in VERTICAL_COORDINATS:
-            print('Not available coordinats')
-            continue
-
-        real_x, real_y = int(x) - 1, VERTICAL_COORDINATS.index(y)
-        if field[real_y][real_x] == '_':
-            break
+        player1_sym = input('Выберите символ для первого игрока (x или o): ').strip().lower()
+        if player1_sym in ALLOWED_SYMBOLS:
+            player2_sym = 'o' if player1_sym == 'x' else 'x'
+            print(f'игроку_1 присвоено "{player1_sym}", игроку_2 присвоено "{player2_sym}"')
+            return player1_sym, player2_sym
         else:
-            print('Position not empty')
-    return real_x, real_y
+            print('Неверный символ, только "x" или "o" (en)')
 
-def get_opponent_char(char):
-    return '0' if char == 'x' else 'x'
 
-def is_win(char, field):
-    opponent_char = get_opponent_char(char)
+def order(sym1, sym2):
+    print(f'Первый ходит игрок_1 с символом "{sym1}"')
 
-    #check lines
-    for y in range(3):
-        if opponent_char not in field[y] and '_' not in field[y]:
+    while True:
+        # Ход первого игрока
+        display_field()
+        make_move("игрок_1", sym1)
+        display_field()
+        if is_win():
+            print(f'Победил игрок_1')
+            break
+
+        elif is_draw():
+            print('Ничья')
+            break
+
+        # Ход второго игрока
+        make_move("игрок_2", sym2)
+        display_field()
+        if is_win():
+            print(f'Победил игрок_2')
+            break
+
+
+def make_move(player, symbol):
+    while True:
+        player_cor = input(f'Введите координаты для {player}: ').strip().lower()
+
+        numpad_to_index = {
+            '7': 0, '8': 1, '9': 2,
+            '4': 3, '5': 4, '6': 5,
+            '1': 6, '2': 7, '3': 8
+        }
+
+        if player_cor in numpad_to_index:
+            cell = numpad_to_index[player_cor]
+            if is_presence(FIELD[cell]):
+                print('Клетка занята')
+            else:
+                FIELD[cell] = symbol
+                break
+        else:
+            print('Неверные координаты, введите цифры от 1 до 9')
+
+
+
+def display_field():
+    print("""для координат вы можете использовать расположение цифровой клавиатуры:
+------------
+| 7 | 8 | 9 |
+| 4 | 5 | 6 |
+| 1 | 2 | 3 |
+------------""")
+    field = list(map(lambda x: '_' if x is None else x, FIELD))
+    print('------------')
+    print(f"| {field[0]} | {field[1]} | {field[2]} |")
+    print(f"| {field[3]} | {field[4]} | {field[5]} |")
+    print(f"| {field[6]} | {field[7]} | {field[8]} |")
+    print('------------')
+
+def is_presence(cell):
+    return cell is not None
+
+def is_win():
+    # Создаем кортежи для проверки выигрышных комбинаций
+    rows = ((0, 1, 2), (3, 4, 5), (6, 7, 8))  # горизонтали
+    cols = ((0, 3, 6), (1, 4, 7), (2, 5, 8))  # вертикали
+    diags = ((0, 4, 8), (2, 4, 6))  # диагонали
+
+    for combination in rows + cols + diags:
+        if FIELD[combination[0]] == FIELD[combination[1]] == FIELD[combination[2]] is not None:
             return True
-
-   #check column
-    for x in range(3):
-        col = [field[0][x], field[1][x], field[2][x]]
-        if opponent_char not in col and '_' not in col:
-            return True
-
-    #check diagonal
-    diag1 = [field[0][0], field[1][1], field[2][2]]
-    if opponent_char not in diag1 and '_' not in diag1:
-        return True
-
-    diag2 = [field[0][2], field[1][1], field[2][0]]
-    if opponent_char not in diag2 and '_' not in diag2:
-        return True
-
     return False
 
-field = [
-    ['_' for x in range(3)] for y in range(3)
-          ]
+# проверка на ничью
+def is_draw():
+    return None not in FIELD #None - это пустая клетка, если все клетки заполнены, то None не будет
 
-user_char = get_user_char()
-computer_char = get_opponent_char(user_char)
-
-
-def get_computer_position(field):
-    x, y = randint(0, 2), randint(0, 2)
-    while field[y][x] != '_':
-        x, y = randint(0, 2), randint(0, 2)
-    return x, y
-
-
-while True:
-    show_field(field)
-    if is_draw(field):
-        print('is Draw')
-        break
-
-
-    x, y = get_user_position(field)
-    field[y][x] = user_char
-
-    if is_win(user_char, field):
-        print('You win')
-        break
-
-
-    x, y = get_computer_position(field)
-    field[y][x] = computer_char
-
-    if is_win(computer_char, field):
-        print('You lose')
-        break
+if __name__ == '__main__':
+    game()
