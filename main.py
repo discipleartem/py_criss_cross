@@ -99,11 +99,12 @@ def display_field():
 | 4 | 5 | 6 |
 | 1 | 2 | 3 |
 ------------""")
-    field = list(map(lambda x: '_' if x is None else x, FIELD))
+    field = list(map(lambda x: '_' if x is None else x, FIELD)) #заменяем None на '_'
+
+    #отрисовываем игровое поле
     print('------------')
-    print(f"| {field[0]} | {field[1]} | {field[2]} |")
-    print(f"| {field[3]} | {field[4]} | {field[5]} |")
-    print(f"| {field[6]} | {field[7]} | {field[8]} |")
+    for i in range(0, 9, 3):
+        print(f"| {field[i]} | {field[i + 1]} | {field[i + 2]} |")
     print('------------')
 
 def is_presence(cell):
