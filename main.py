@@ -1,4 +1,4 @@
-#сравнить https://github.com/samalexpro375/TicTacToe.git
+# сравнить https://github.com/samalexpro375/TicTacToe.git
 """
 Задача: написать игру крестики-нолики для двух игроков.
 - Добавить возможность выбора символа (x или o) и ходов.
@@ -14,7 +14,7 @@
 
 """ вообразим виртуальное игровое поле 3x3
    | a | b | c |
-     
+------------------
 1  |   |   |   |
    -------------
 2  |   |   |   |
@@ -35,14 +35,22 @@ numbers = ['1', '2', '3']
 keys = [letter + number for letter in letters for number in numbers]
 default_value = None
 FIELD = dict.fromkeys(keys, default_value)
-
+ALLOWED_SYMBOLS = ('x', 'o')
 
 def game():
     print('Игра крестики-нолики')
     display_field()
 
 
-
+def choose_symbol():
+    symbol = input('Выберите символ (x или o): ')
+    if symbol in ALLOWED_SYMBOLS:
+        if symbol == 'x':
+            return 'x'
+        elif symbol == 'o':
+            return 'o'
+    else:
+        print('Неверный символ или символ уже использован')
 
 def display_field():
     field = {key: "_" if value is None else value for key, value in FIELD.items()}
