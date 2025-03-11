@@ -46,22 +46,14 @@ def game():
     global player_1, player_2 # чтобы изменить значения переменных внутри функции
     player_1, player_2 = choose_symbol(player_1, player_2)
 
-def set_field():
-    keys = [letter + number for letter in LETTERS for number in NUMBERS]
-    default_value = None
 
-    field = dict.fromkeys(keys, default_value)
-    return field
 
 def choose_symbol(first_player: dict, second_player: dict) -> tuple[dict, dict]:
     first_player['symbol'] = get_player_symbol(first_player['name'])
     second_player['symbol'] = 'o' if first_player['symbol'] == 'x' else 'x'
-
-    print(f'Символ {first_player["symbol"]} уже выбран. '
-          f'{second_player["name"]} будет играть символом {second_player["symbol"]}.')
+    print(f'{second_player["name"]} будет играть символом {second_player["symbol"]}.')
 
     return first_player, second_player
-
 
 def get_player_symbol(player_name: str) -> str:
     while True:
@@ -88,6 +80,12 @@ def display_field():
             print(modified_field[letter + number], end=" | ") # разделитель между клетками
 
         print('', end='\n') # перенос после каждой строки
+def set_field():
+    keys = [letter + number for letter in LETTERS for number in NUMBERS]
+    default_value = None
+
+    field = dict.fromkeys(keys, default_value)
+    return field
 
 
 if __name__ == '__main__':
