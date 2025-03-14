@@ -53,7 +53,7 @@ def game():
 def make_move(field: dict) -> None:
     """Организует процесс хода игроков."""
     while True: # бесконечный цикл для ходов
-        for player in (player_1, player_2):
+        for player in (player_1, player_2): # перебираем игроков
             move = get_valid_move(player, field)
             field[move] = player['symbol']
             display_field(field=field) # отображение поля после хода
