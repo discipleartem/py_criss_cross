@@ -41,20 +41,49 @@ player_2 = {'name': 'Игрок 2', 'symbol': None}
 
 def game():
     print('Игра крестики-нолики')
-    display_field()
+    field = set_field()
+    display_field(field=field)
 
     global player_1, player_2 # чтобы изменить значения переменных внутри функции
     player_1, player_2 = choose_symbol(player_1, player_2)
+    make_move(field)
 
 
+
+def make_move(field: dict) -> dict | None:
+    """Организует процесс хода игроков."""
+    while True: # бесконечный цикл для ходов
+        for player in (player_1, player_2):
+            move = get_valid_move(player, field)
+            field[move] = player['symbol']
+            display_field(field=field) # отображение поля после хода
+
+
+
+def get_valid_move(player: dict, field: dict) -> str:
+    """Запрашивает у игрока ход и проверяет его на корректность."""
+    while True:
+        move = input(f'{player["name"]}, сделайте ход (например, a1): ').lower().strip()
+        if is_validate_move(field, move): # True | False
+            return move
+def is_validate_move(field: dict, move: str) -> bool:
+    """Проверяет корректность и доступность хода."""
+    if move not in field:
+        print(f'Поля с координатами "{move}" не существует. Используйте формат буква+цифра (например, a1, b2, c3).')
+        return False
+
+    if field[move] is not None:
+        print(f'Поле "{move}" уже занято. Выберите другое поле.')
+        return False
+
+    return True
 
 def choose_symbol(first_player: dict, second_player: dict) -> tuple[dict, dict]:
     first_player['symbol'] = get_player_symbol(first_player['name'])
     second_player['symbol'] = 'o' if first_player['symbol'] == 'x' else 'x'
-    print(f'{second_player["name"]} будет играть символом {second_player["symbol"]}.')
+    print(f'{second_player["name"]} будет играть символом "{second_player["symbol"]}"')
 
     return first_player, second_player
-
 def get_player_symbol(player_name: str) -> str:
     while True:
         symbol = input(f'Выберите символ для {player_name} (x или o): ').lower().strip()
@@ -62,9 +91,8 @@ def get_player_symbol(player_name: str) -> str:
             return symbol
         print('Неверный символ. Пожалуйста, выберите x или o.')
 
-def display_field():
-    origin_field = set_field()
-    modified_field = {key: "_" if value is None else value for key, value in origin_field.items()}
+def display_field(field: dict) -> None:
+    modified_field = {key: "_" if value is None else value for key, value in field.items()}
 
     print('  ', end=' ') # отступ в начале строки для a, b, c
 
@@ -80,7 +108,7 @@ def display_field():
             print(modified_field[letter + number], end=" | ") # разделитель между клетками
 
         print('', end='\n') # перенос после каждой строки
-def set_field():
+def set_field() -> dict:
     keys = [letter + number for letter in LETTERS for number in NUMBERS]
     default_value = None
 
