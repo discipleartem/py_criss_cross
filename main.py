@@ -50,7 +50,7 @@ def game():
 
 
 
-def make_move(field: dict) -> dict | None:
+def make_move(field: dict) -> None:
     """Организует процесс хода игроков."""
     while True: # бесконечный цикл для ходов
         for player in (player_1, player_2):
