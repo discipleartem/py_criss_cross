@@ -58,6 +58,31 @@ def make_move(field: dict) -> None:
             field[move] = player['symbol']
             display_field(field=field) # отображение поля после хода
 
+            if is_win(field):
+                return  # выход из функции и завершение игры
+
+
+
+def is_win(field: dict) -> bool | None:
+    win_combinations = [
+        ['a1', 'a2', 'a3'],
+        ['b1', 'b2', 'b3'],
+        ['c1', 'c2', 'c3'],
+        ['a1', 'b1', 'c1'],
+        ['a2', 'b2', 'c2'],
+        ['a3', 'b3', 'c3'],
+        ['a1', 'b2', 'c3'],
+        ['a3', 'b2', 'c1'],
+    ]
+
+    for combination in win_combinations:
+        if None not in combination:
+            if all(field[cell] == 'x' for cell in combination):
+                print(f'Победил {player_1["name"]}')
+                return True
+            elif all(field[cell] == 'o' for cell in combination):
+                print(f'Победил {player_2["name"]}')
+                return True
 
 
 def get_valid_move(player: dict, field: dict) -> str:
