@@ -60,10 +60,12 @@ def make_move(field: dict) -> None:
 
             if is_win(field):
                 return  # выход из функции и завершение игры
+            elif is_draw(field):
+                print("Ничья!")
+                return  # выход из функции и завершение игры
 
 
-
-def is_win(field: dict) -> bool | None:
+def is_win(field: dict) -> bool:
     win_combinations = [
         ['a1', 'a2', 'a3'],
         ['b1', 'b2', 'b3'],
@@ -83,7 +85,10 @@ def is_win(field: dict) -> bool | None:
             elif all(field[cell] == 'o' for cell in combination):
                 print(f'Победил {player_2["name"]}')
                 return True
-
+    return False
+def is_draw(field: dict) -> bool:
+    """Проверяет, есть ли ничья."""
+    return all(value is not None for value in field.values())
 
 def get_valid_move(player: dict, field: dict) -> str:
     """Запрашивает у игрока ход и проверяет его на корректность."""
