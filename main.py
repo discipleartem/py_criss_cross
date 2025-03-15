@@ -1,3 +1,4 @@
+# сравнить https://github.com/samalexpro375/TicTacToe.git
 """
 Задача: написать игру крестики-нолики для двух игроков.
 - Добавить возможность выбора символа (x или o) и ходов.
@@ -8,121 +9,151 @@
 
 Дополнительные задачи:
 - добавить возможность выбора режима игры (два игрока, компьютер против игрока и т.д.)
+- добавить возможность выбора размера игрового поля (3x3, 4x4, 5x5 и т.д.)
 """
+
+""" вообразим виртуальное игровое поле 3x3
+   | a | b | c |
+------------------
+1  |   |   |   |
+   -------------
+2  |   |   |   |
+   -------------
+3  |   |   |   |
+   -------------   
+"""
+
 
 """выигрышные последовательности
-0 1 2   3 4 5    6 7 8
-0 3 6   1 4 7    2 5 8
-0 4 8   2 4 6
+'a1', 'a2', 'a3'
+'b1', 'b2', 'b3'
+'c1', 'c2', 'c3' # вертикальные комбинации
+
+'a1', 'b1', 'c1' # горизонтальные комбинации
+'a2', 'b2', 'c2'
+'a3', 'b3', 'c3'
+
+'a1', 'b2', 'c3' # диагональные комбинации
+'a3', 'b2', 'c1'
 """
 
+LETTERS = ['a', 'b', 'c']
+NUMBERS = ['1', '2', '3']
+ALLOWED_SYMBOLS = ('x', 'o')
 
+player_1 = {'name': 'Игрок 1', 'symbol': None}
+player_2 = {'name': 'Игрок 2', 'symbol': None}
 
-#сравнить https://github.com/samalexpro375/TicTacToe.git
-
-
-
-# Игровое поле можно представить в виде списка [].
-FIELD = [None, None, None,
-         None, None, None,
-         None, None, None]
 
 
 def game():
     print('Игра крестики-нолики')
-    player1_sym , player2_sym = choose_sym()
-    order(player1_sym, player2_sym)
+    field = set_field()
+    display_field(field=field)
 
-
-def choose_sym():
-    ALLOWED_SYMBOLS = ('x', 'o')
-    while True:
-        player1_sym = input('Выберите символ для первого игрока (x или o): ').strip().lower()
-        if player1_sym in ALLOWED_SYMBOLS:
-            player2_sym = 'o' if player1_sym == 'x' else 'x'
-            print(f'игроку_1 присвоено "{player1_sym}", игроку_2 присвоено "{player2_sym}"')
-            return player1_sym, player2_sym
-        else:
-            print('Неверный символ, только "x" или "o" (en)')
-
-
-def order(sym1, sym2):
-    print(f'Первый ходит игрок_1 с символом "{sym1}"')
-
-    while True:
-        # Ход первого игрока
-        display_field()
-        make_move("игрок_1", sym1)
-        display_field()
-        if is_win():
-            print(f'Победил игрок_1')
-            break
-
-        elif is_draw():
-            print('Ничья')
-            break
-
-        # Ход второго игрока
-        make_move("игрок_2", sym2)
-        display_field()
-        if is_win():
-            print(f'Победил игрок_2')
-            break
-
-
-def make_move(player, symbol):
-    while True:
-        player_cor = input(f'Введите координаты для {player}: ').strip().lower()
-
-        numpad_to_index = {
-            '7': 0, '8': 1, '9': 2,
-            '4': 3, '5': 4, '6': 5,
-            '1': 6, '2': 7, '3': 8
-        }
-
-        if player_cor in numpad_to_index:
-            cell = numpad_to_index[player_cor]
-            if is_presence(FIELD[cell]):
-                print('Клетка занята')
-            else:
-                FIELD[cell] = symbol
-                break
-        else:
-            print('Неверные координаты, введите цифры от 1 до 9')
+    global player_1, player_2 # чтобы изменить значения переменных внутри функции
+    player_1, player_2 = choose_symbol(player_1, player_2)
+    make_move(field)
 
 
 
-def display_field():
-    print("""для координат вы можете использовать расположение цифровой клавиатуры:
-------------
-| 7 | 8 | 9 |
-| 4 | 5 | 6 |
-| 1 | 2 | 3 |
-------------""")
-    field = list(map(lambda x: '_' if x is None else x, FIELD))
-    print('------------')
-    print(f"| {field[0]} | {field[1]} | {field[2]} |")
-    print(f"| {field[3]} | {field[4]} | {field[5]} |")
-    print(f"| {field[6]} | {field[7]} | {field[8]} |")
-    print('------------')
+def make_move(field: dict) -> None:
+    """Организует процесс хода игроков."""
+    while True: # бесконечный цикл для ходов
+        for player in (player_1, player_2): # перебираем игроков
+            move = get_valid_move(player, field)
+            field[move] = player['symbol']
+            display_field(field=field) # отображение поля после хода
 
-def is_presence(cell):
-    return cell is not None
+            if is_win(field):
+                return  # выход из функции и завершение игры
+            elif is_draw(field):
+                print("Ничья!")
+                return  # выход из функции и завершение игры
 
-def is_win():
-    # Создаем кортежи для проверки выигрышных комбинаций
-    rows = ((0, 1, 2), (3, 4, 5), (6, 7, 8))  # горизонтали
-    cols = ((0, 3, 6), (1, 4, 7), (2, 5, 8))  # вертикали
-    diags = ((0, 4, 8), (2, 4, 6))  # диагонали
 
-    for combination in rows + cols + diags:
-        if FIELD[combination[0]] == FIELD[combination[1]] == FIELD[combination[2]] is not None:
-            return True
+def is_win(field: dict) -> bool:
+    win_combinations = [
+        ['a1', 'a2', 'a3'],
+        ['b1', 'b2', 'b3'],
+        ['c1', 'c2', 'c3'], # вертикальные комбинации
+
+        ['a1', 'b1', 'c1'], # горизонтальные комбинации
+        ['a2', 'b2', 'c2'],
+        ['a3', 'b3', 'c3'],
+
+        ['a1', 'b2', 'c3'], # диагональные комбинации
+        ['a3', 'b2', 'c1'],
+    ]
+
+    for combination in win_combinations:
+        if None not in combination:
+            if all(field[cell] == 'x' for cell in combination):
+                print(f'Победил {player_1["name"]}')
+                return True
+            elif all(field[cell] == 'o' for cell in combination):
+                print(f'Победил {player_2["name"]}')
+                return True
     return False
+def is_draw(field: dict) -> bool:
+    """Проверяет, есть ли ничья."""
+    return all(value is not None for value in field.values())
 
-# проверка на ничью
-def is_draw():
-    return None not in FIELD #None - это пустая клетка, если все клетки заполнены, то None не будет
+def get_valid_move(player: dict, field: dict) -> str:
+    """Запрашивает у игрока ход и проверяет его на корректность."""
+    while True:
+        move = input(f'{player["name"]}, сделайте ход (например, a1): ').lower().strip()
+        if is_validate_move(field, move): # True | False
+            return move
+def is_validate_move(field: dict, move: str) -> bool:
+    """Проверяет корректность и доступность хода."""
+    if move not in field:
+        print(f'Поля с координатами "{move}" не существует. Используйте формат буква+цифра (например, a1, b2, c3).')
+        return False
+
+    if field[move] is not None:
+        print(f'Поле "{move}" уже занято. Выберите другое поле.')
+        return False
+
+    return True
+
+def choose_symbol(first_player: dict, second_player: dict) -> tuple[dict, dict]:
+    first_player['symbol'] = get_player_symbol(first_player['name'])
+    second_player['symbol'] = 'o' if first_player['symbol'] == 'x' else 'x'
+    print(f'{second_player["name"]} будет играть символом "{second_player["symbol"]}"')
+
+    return first_player, second_player
+def get_player_symbol(player_name: str) -> str:
+    while True:
+        symbol = input(f'Выберите символ для {player_name} (x или o): ').lower().strip()
+        if symbol in ALLOWED_SYMBOLS:
+            return symbol
+        print('Неверный символ. Пожалуйста, выберите x или o.')
+
+def display_field(field: dict) -> None:
+    modified_field = {key: "_" if value is None else value for key, value in field.items()}
+
+    print('  ', end=' ') # отступ в начале строки для a, b, c
+
+    for letter in LETTERS:
+        print(letter, end=' | ') # разделитель между буквами
+
+    print('', end='\n') # перенос строки
+
+    for number in NUMBERS:
+        print(number, end='  ')# отступ между цифрами
+
+        for letter in LETTERS:
+            print(modified_field[letter + number], end=" | ") # разделитель между клетками
+
+        print('', end='\n') # перенос после каждой строки
+def set_field() -> dict:
+    keys = [letter + number for letter in LETTERS for number in NUMBERS]
+    default_value = None
+
+    field = dict.fromkeys(keys, default_value)
+    return field
+
 
 if __name__ == '__main__':
     game()
