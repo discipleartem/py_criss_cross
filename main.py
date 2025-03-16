@@ -48,6 +48,7 @@ player_2 = {'name': 'Игрок 2', 'symbol': None}
 
 def game():
     print('Игра крестики-нолики')
+    game_mode()
     field = set_field()
     display_field(field=field)
 
@@ -55,6 +56,22 @@ def game():
     player_1, player_2 = choose_symbol(player_1, player_2)
     make_move(field)
 
+def game_mode() -> str:
+    mode = ['два игрока', 'игрок vs компьютер']
+
+    while True:
+        print('Выберите режим игры: ')
+        for index, option in enumerate(mode):
+            print(f"{index} - {option}")
+
+        choice = input()
+        try:
+            choice = int(choice)
+            if 0 <= choice < len(mode):
+                print(f'Выбран режим игры: {mode[choice]}')
+                return mode[choice]
+        except ValueError:
+            print('Неверный ввод. Пожалуйста, введите число.')
 
 
 def make_move(field: dict) -> None:
