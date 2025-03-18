@@ -56,23 +56,36 @@ def game():
     player_1, player_2 = choose_symbol(player_1, player_2)
     make_move(field)
 
+
 def game_mode() -> str:
+    return select_game_mode()
+
+def select_game_mode() -> str:
     mode = ['два игрока', 'игрок vs компьютер']
-
     while True:
-        print('Выберите режим игры: ')
-        for index, option in enumerate(mode):
-            print(f"{index} - {option}")
-
-        choice = input()
-        try:
-            choice = int(choice)
-            if 0 <= choice < len(mode):
-                print(f'Выбран режим игры: {mode[choice]}')
-                return mode[choice]
-        except ValueError:
+        display_game_modes()
+        user_input = get_user_input()
+        if validate_user_input(user_input, mode):
+            print(f'Выбран режим игры: {mode[int(user_input)]}')
+            return mode[int(user_input)]
+        else:
             print('Неверный ввод. Пожалуйста, введите число.')
 
+def display_game_modes() -> None:
+    mode = ['два игрока', 'игрок vs компьютер']
+    print('Выберите режим игры: ')
+    for index, option in enumerate(mode):
+        print(f"{index} - {option}")
+
+def get_user_input() -> str:
+    return input()
+
+def validate_user_input(user_input: str, mode: list) -> bool:
+    try:
+        choice = int(user_input)
+        return 0 <= choice < len(mode)
+    except ValueError:
+        return False
 
 def make_move(field: dict) -> None:
     """Организует процесс хода игроков."""
